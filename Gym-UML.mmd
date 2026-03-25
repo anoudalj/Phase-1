@@ -1,0 +1,88 @@
+classDiagram
+direction TB
+    class Services {
+	    +getServices() int
+    }
+
+    class Gym {
+	    -String gymName
+	    -int numOfMemberships
+	    -Membership[] membershipList
+	    -Subscription[] subscriptionList
+	    +Gym(String, int)
+	    +boolean addMembership(Membership m)
+	    +boolean removeMembership(int id)
+	    +Membership searchMembership(int id)
+	    +Membership recursiveSearchMembership(int id, int index)
+	    +Subscription createSubscription(Subscription s)
+	    +boolean cancelSubscription(int id)
+	    +String toString()
+    }
+
+    class Subscription {
+	    -String memberName
+	    -int memberId
+	    -String phone
+	    -int durationMonths
+	    -double totalPrice
+	    +Subscription(String, int, String, int)
+	    +double calculateTotal()
+	    +String toString()
+    }
+
+    class Membership {
+	    #int membershipId
+	    #String type
+	    #double price
+	    #boolean available
+	    +Membership(int, String, double, boolean)
+	    +double calculatePrice()
+	    +String toString()
+    }
+
+    class RegularMembership {
+	    -int sessionsPerWeek
+	    +RegularMembership(int, String, double, boolean, int)
+	    +double calculatePrice()
+	    +int getServices()
+	    +String toString()
+    }
+
+    class PremiumMembership {
+	    -boolean personalTrainerIncluded
+	    -boolean dietPlanIncluded
+	    +PremiumMembership(boolean, boolean, int, String, double)
+	    +double calculatePrice()
+	    +String toString()
+    }
+
+    class VIPMembership {
+	    -boolean priorityBooking
+	    -int guestPasses
+	    +VIPMembership(boolean, int, boolean, boolean, int, String, double)
+	    +double calculatePrice()
+	    +int getServices()
+	    +String toString()
+    }
+
+    class testGym {
+	    +input : Scanner
+	    +gym : Gym
+	    +main() : void
+	    +addNewSubscription() : void
+	    +viewMemberships() : void
+	    +cancelSubscription() : void
+	    +searchMembership() : void
+	    +printAllRegularRecursion(RegularMembership[] list, int index) : void
+    }
+
+	<<interface>> Services
+	<<abstract>> Membership
+
+    Gym "1" *-- "1..*" Membership : membershipList
+    Gym "1" o-- "0..*" Subscription : subscriptionList
+    Membership <|-- RegularMembership
+    Membership <|-- PremiumMembership
+    PremiumMembership <|-- VIPMembership
+    Services <|.. RegularMembership
+    Services <|.. VIPMembership
