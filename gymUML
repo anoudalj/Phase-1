@@ -1,0 +1,86 @@
+classDiagram
+direction TB
+
+class Gym {
+    -String gymName
+    -Membership[] membershipList
+    -Subscription[] subscriptions
+    -int numMembership
+    -int numSub
+    +Gym(String, int)
+    +addMembership(Membership)
+    +deleteMembership(int)
+    +addSubscription(Subscription)
+    +cancelSubscription(String, int)
+    +searchMembership(int)
+    +searchSubscription(String, int)
+}
+
+class Subscription {
+    -String fullName
+    -String phone
+    -String id
+    -Membership membership
+    -int numOfMonths
+    -double totalPrice
+    +Subscription(String, String, String)
+    +subscribe(Membership, int)
+    +cancelSubscription()
+    +toString()
+}
+
+class Membership {
+    <<abstract>>
+    -int membershipId
+    -boolean available
+    #double price
+    #String name
+    +calculatePrice()
+    +toString()
+}
+
+class PremiumMembership {
+    -boolean personalTrainer
+    -boolean dietPlan
+    +calculatePrice()
+    +toString()
+}
+
+class VIPMembership {
+    -int guestPasses
+    +calculatePrice()
+    +getServices()
+    +toString()
+}
+
+class RegularMembership {
+    -int daysPerWeek
+    +calculatePrice()
+    +getServices()
+    +toString()
+}
+
+class Services {
+    <<interface>>
+    +getServices()
+}
+
+class TestGym {
+    +main()
+    +addNewSubscription()
+    +viewMemberships()
+    +cancelSubscription()
+    +searchSubscription()
+}
+
+Gym o-- "0..*" Subscription
+Gym *-- "1..*" Membership
+
+Subscription --> Membership
+
+Membership <|-- PremiumMembership
+Membership <|-- RegularMembership
+PremiumMembership <|-- VIPMembership
+
+Services <|.. RegularMembership
+Services <|.. VIPMembership
