@@ -112,6 +112,10 @@ public class Gym {
             list[j++] = (VIPMembership) membershipList[i];
       return list;
    }
+  
+public Membership[] getAllMemberships() {
+    return membershipList;
+}
 
    // get available memberships
    public Membership[] getAllAvailable() {
