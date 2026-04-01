@@ -1,3 +1,4 @@
+
 import java.util.Scanner;
 
 public class TestGym {
@@ -77,15 +78,13 @@ public class TestGym {
          return;
       }
    
-      System.out.println("Enter customer's full name: ");
       input.nextLine();
-      String name = input.nextLine();
-      System.out.println("Enter phone: ");
-      String phone = input.next();
+      String name = readValidName (input);
+      String phone = readValidPhone(input);
       System.out.println("Enter customer ID: ");
       String idNum = input.next();
    
-      Subscription sub = new Subscription(name, phone, idNum);
+   Subscription sub = new Subscription(name, phone, idNum);
    
       System.out.println("Enter number of months: ");
       int months = input.nextInt();
@@ -98,18 +97,21 @@ public class TestGym {
    }
 
    // view memberships
-   public static void viewMemberships() {
-      RegularMembership[] list = gym.getRegular();
-      printAllRegularRecursion(list, 0);
+
+     public static void viewMemberships() {
+     Membership[] list = gym.getAllMemberships();
+     printAllMemberships(list, 0);
    }
 
    // recursion method
-   public static void printAllRegularRecursion(RegularMembership[] list, int index) {
-      if (index == list.length || list[index] == null)
-         return;
-   
-      System.out.println(list[index]);
-      printAllRegularRecursion(list, index + 1);
+  
+  public static void printAllMemberships(Membership[] list, int index) {
+   if (index == list.length || list[index] == null)
+     return;
+     
+     System.out.println(list[index]);
+     printAllMemberships(list, index + 1);
+  
    }
 
    // cancel subscription
@@ -139,4 +141,68 @@ public class TestGym {
       else
          System.out.println(sub);
    }
+   
+
+ public static String readValidPhone(Scanner input) {
+    String phone;
+    boolean valid;
+    
+    while (true) {
+        System.out.print("Enter phone (10 digits): ");
+        phone = input.next(); 
+        valid = true;
+
+       if (phone.length() != 10) {
+        valid = false;
+        } else {
+        for (int i = 0; i < phone.length(); i++) {
+        if (!Character.isDigit(phone.charAt(i))) {
+        valid = false;
+        break;
+        }
+}
+}
+
+        if (valid) {
+        return phone;
+         }
+
+      System.out.println("Invalid phone number.");
+}
+}
+
+public static String readValidName(Scanner input) {
+String name;
+boolean valid;
+boolean hasSpace;
+
+while (true) {
+System.out.print("Enter customer's full name: ");
+name = input.nextLine();
+valid = true;
+hasSpace = false;
+
+if (name.length() == 0) {
+valid = false;
+} else {
+for (int i = 0; i < name.length(); i++) {
+char ch = name.charAt(i);
+
+if (ch == ' ') {
+hasSpace = true;
+}
+
+if (!Character.isLetter(ch) && ch != ' ') {
+valid = false;
+break;
+}
+}
+}
+
+if (valid && hasSpace) {
+return name;
+ }
+ System.out.println("Invalid full name. Enter first and last name.");
+}
+}
 }
