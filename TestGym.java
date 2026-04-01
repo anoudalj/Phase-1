@@ -26,15 +26,15 @@ public class TestGym {
       gym.addMembership(vip1);
       gym.addMembership(vip2);
    
-      int choice;
-      do {
+      int choice;      do {
          System.out.println("***** Menu *****");
          System.out.println("1- Add new subscription");
          System.out.println("2- View memberships");
          System.out.println("3- Cancel subscription");
          System.out.println("4- Search subscription");
-         System.out.println("5- Delete membership");
-         System.out.println("6- Exit");
+         System.out.println("5- add new membership");
+         System.out.println("6- Delete membership");
+         System.out.println("7- Exit");
          choice = input.nextInt();
       
          switch (choice) {
@@ -51,20 +51,69 @@ public class TestGym {
                searchSubscription();
                break;
             case 5:
+               System.out.println("Enter what type you want the membership to be : 1-regular , 2-premium 3- vip");
+               int type = input.nextInt();
+               System.out.println("Enter an ID to create a new membership");
+               int addid = input.nextInt();
+               System.out.println("Enter a name for the membership ");
+               input.nextLine();
+               String membership_name = input.nextLine();
+               input.nextLine();
+               System.out.println("Enter a price for the membership ");
+               double price = input.nextDouble();
+               
+               Membership new_membership;
+               
+               if (type == 1) {
+               System.out.println("how many days per week the person can come to the gym in this membership?");
+               int daysperweek = input.nextInt();
+               new_membership = new RegularMembership(daysperweek, addid, membership_name, price);
+               }
+               else if (type == 2) {
+               System.out.println("do you want this membership to have personal trainer ?\nplease chose true or false");
+               boolean personaltranier = input.nextBoolean();
+               System.out.println("do you want this membership to have a customised diet plan ?\nplease chose true or false");
+               boolean dietplan = input.nextBoolean();
+
+               new_membership = new PremiumMembership(personaltranier, dietplan, addid, membership_name, price);
+               } 
+               else if (type == 3) {
+               System.out.println("how many guest passes you want in this membership?");
+               int guestpasses = input.nextInt();
+               System.out.println("do you want this membership to have personal trainer ?\nplease chose true or false");
+               boolean personaltranier = input.nextBoolean();
+               System.out.println("do you want this membership to have a customised diet plan ?\nplease chose true or false");
+               boolean dietplan = input.nextBoolean();
+
+               new_membership = new VIPMembership(guestpasses , personaltranier , dietplan , addid, membership_name, price);
+               }
+               else{
+               System.out.println("the type number you entered doesnt exist");
+               break;}
+               
+               
+               if (gym.addMembership(new_membership))
+                  System.out.println("addition has been done\n");
+               else
+                  System.out.println("Can't add\n");
+                  
+               break;
+
+               case 6:
                System.out.println("Enter membership ID");
                int id = input.nextInt();
                if (gym.deleteMembership(id))
-                  System.out.println("Deletion has been done");
+                  System.out.println("Deletion has been done\n");
                else
-                  System.out.println("Can't delete");
+                  System.out.println("Can't delete\n");
                break;
-            case 6:
+            case 7:
                System.out.println("**** Goodbye! *****");
                break;
             default:
                System.out.println("Invalid input");
          }
-      } while (choice != 6);
+      } while (choice != 7);
    }
 
    // add subscription
