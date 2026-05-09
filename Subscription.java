@@ -1,4 +1,7 @@
-public class Subscription {
+
+import java.io.Serializable;
+
+public class Subscription implements Serializable {
     private String fullName;
     private String phone;
     private String id;
