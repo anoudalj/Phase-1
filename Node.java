@@ -1,4 +1,7 @@
-public class Node {
+
+import java.io.Serializable;
+
+public class Node implements Serializable{
    private Object data;
    private Node next;
 
