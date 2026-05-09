@@ -56,7 +56,7 @@ public class GymGUI extends JFrame implements ActionListener {
         titleLabel =
                 new JLabel("Welcome To Our Gym System");
 
-        titleLabel.setBounds(170,40,400,50);
+        titleLabel.setBounds(170,40,700,70);
 
         titleLabel.setFont(
                 new Font("Arial",Font.BOLD,30));
