@@ -7,10 +7,17 @@ public class GymGUI extends JFrame implements ActionListener {
 
     Gym gym;
 
-    JButton customerButton;
-    JButton membershipsButton;
-    JButton exitButton;
+   JButton customerButton;
+JButton membershipsButton;
+JButton addMembershipButton;
+JButton deleteMembershipButton;
+JButton cancelSubscriptionButton;
+JButton searchButton;
+JButton deleteButton;
+JButton cancelButton;
+JButton exitButton;
 
+   
     JLabel titleLabel;
     JLabel imageLabel;
 
@@ -68,18 +75,32 @@ public class GymGUI extends JFrame implements ActionListener {
         membershipsButton = new JButton("View Memberships");
 
         membershipsButton.setBounds(160,270,220,45);
-
+searchButton = new JButton("Search Subscription");
+deleteButton = new JButton("Delete Memberships ");
+cancelButton = new JButton("Cancel Subscription");
         exitButton = new JButton("Exit");
 
-        exitButton.setBounds(160,350,220,45);
+searchButton.setBounds(160,350,220,45);
+deleteButton.setBounds(160,430,220,45);
+cancelButton.setBounds(160,510,220,45);
+        exitButton.setBounds(160,590,220,45);
+
 
         add(customerButton);
         add(membershipsButton);
+        add(searchButton);
+        add(deleteButton);
+add(cancelButton);
+
         add(exitButton);
+
 
         customerButton.addActionListener(this);
 
         membershipsButton.addActionListener(this);
+searchButton.addActionListener(this);
+deleteButton.addActionListener(this);
+cancelButton.addActionListener(this);
 
         exitButton.addActionListener(this);
 
@@ -103,112 +124,219 @@ public class GymGUI extends JFrame implements ActionListener {
                 JFrame.EXIT_ON_CLOSE);
     }
 
-    public void actionPerformed(ActionEvent e) {
 
-        if (e.getSource() == customerButton) {
+   
+public void actionPerformed(ActionEvent e) {
 
-            String membershipId =
-                    JOptionPane.showInputDialog(
-                            "Enter Membership ID");
+    // ADD SUBSCRIPTION
+if (e.getSource() == customerButton) {
 
-            Membership membership =
-                    gym.searchMembership(
-                            Integer.parseInt(
-                                    membershipId));
+    String membershipId =
+        JOptionPane.showInputDialog(
+        "Enter Membership ID");
 
-            if (membership == null ||
-                    !membership.isAvailable()) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Membership not available");
-
-                return;
-            }
-
-            String name =
-                    JOptionPane.showInputDialog(
-                            "Enter Full Name");
-
-            String phone =
-                    JOptionPane.showInputDialog(
-                            "Enter Phone Number");
-
-            String customerId =
-                    JOptionPane.showInputDialog(
-                            "Enter Customer ID");
-
-            String months =
-                    JOptionPane.showInputDialog(
-                            "Enter Number Of Months");
-
-            Subscription sub =
-                    new Subscription(
-                            name,
-                            phone,
-                            customerId);
-
-            sub.subscribe(
-                    membership,
-                    Integer.parseInt(months));
-
-            gym.addSubscription(sub);
-
-            gym.saveAllInfo();
-
-           JTextArea area = new JTextArea(sub.toString());
-
-area.setEditable(false);
-
-JOptionPane.showMessageDialog(
-        this,
-        new JScrollPane(area),
-        "Subscription Details",
-        JOptionPane.INFORMATION_MESSAGE);
-                }
-
-        if (e.getSource() == membershipsButton) {
-
-            JFrame frame =
-                    new JFrame("Memberships");
-
-            JTextArea area =
-                    new JTextArea();
-
-            List list =
-                    gym.getAllMemberships();
-
-            Node current =
-                    list.getHead();
-
-            while(current != null) {
-
-                area.append(
-                        current.getData()
-                                .toString()
-                                + "\n\n");
-
-                current =
-                        current.getNext();
-            }
-
-            area.setEditable(false);
-
-            frame.add(
-                    new JScrollPane(area));
-
-            frame.setSize(500,400);
-
-            frame.setVisible(true);
-        }
-
-        if (e.getSource() == exitButton) {
-
-            System.exit(0);
-        }
+    if (membershipId == null ||
+        membershipId.isEmpty()) {
+        return;
     }
 
-    public static void main(String[] args) {
+    Membership membership =
+        gym.searchMembership(
+        Integer.parseInt(membershipId));
+
+    if (membership == null ||
+        !membership.isAvailable()) {
+
+        JOptionPane.showMessageDialog(
+            this,
+            "Membership Not Available");
+
+        return;
+    }
+
+    String name =
+        JOptionPane.showInputDialog(
+        "Enter Full Name");
+
+    String phone =
+        JOptionPane.showInputDialog(
+        "Enter Phone Number");
+
+    String customerId =
+        JOptionPane.showInputDialog(
+        "Enter Customer ID");
+
+    String monthsText =
+        JOptionPane.showInputDialog(
+        "Enter Number Of Months");
+
+    int months =
+        Integer.parseInt(monthsText);
+
+    Subscription sub =
+        new Subscription(
+            name,
+            phone,
+            customerId,
+            membership,
+            months);
+
+    gym.addSubscription(sub);
+
+    gym.saveAllInfo();
+
+    JTextArea resultarea =
+        new JTextArea(sub.toString());
+
+    resultarea.setEditable(false);
+
+    JOptionPane.showMessageDialog(
+        this,
+        new JScrollPane(resultarea),
+        "Subscription Details",
+        JOptionPane.INFORMATION_MESSAGE);
+}
+    // VIEW MEMBERSHIPS
+    if (e.getSource() == membershipsButton) {
+
+        JFrame frame =
+    new JFrame("Memberships");
+
+JTextArea area =
+    new JTextArea();
+
+List list =
+    gym.getAllMemberships();
+
+Node current =
+    list.getHead();
+
+while(current != null) {
+
+    area.append(
+        current.getData().toString()
+        + "\n\n");
+
+    current =
+        current.getNext();
+}
+
+frame.add(new JScrollPane(area));
+
+frame.setSize(400,400);
+
+frame.setVisible(true);
+}
+
+
+if (e.getSource() == searchButton) {
+
+    String serchcustomerId =
+    JOptionPane.showInputDialog(
+    "Enter Customer ID");
+
+String serchmembershipId =
+    JOptionPane.showInputDialog(
+    "Enter Membership ID");
+
+Subscription foundsub =
+    gym.searchSubscription(
+        serchcustomerId,
+        Integer.parseInt(serchmembershipId));
+
+if (foundsub == null) {
+
+    JOptionPane.showMessageDialog(
+        this,
+        "Subscription Not Found");
+
+}
+else {
+
+    JTextArea searchtarea =
+        new JTextArea(foundsub.toString());
+
+    searchtarea.setEditable(false);
+
+    JOptionPane.showMessageDialog(
+        this,
+        new JScrollPane(searchtarea),
+        "Subscription Details",
+        JOptionPane.INFORMATION_MESSAGE);
+}
+
+
+}
+
+
+
+if (e.getSource() == deleteButton) {
+
+    String deletemembershipId =
+    JOptionPane.showInputDialog(
+    "Enter Membership ID");
+
+boolean deleted =
+    gym.deleteMembership(
+        Integer.parseInt(deletemembershipId));
+
+if (deleted) {
+
+    JOptionPane.showMessageDialog(
+        this,
+        "Membership Deleted");
+
+} else {
+
+    JOptionPane.showMessageDialog(
+        this,
+        "Cannot Delete Membership");
+}
+}
+
+
+if (e.getSource() == cancelButton) {
+String cancelcustomerId =
+    JOptionPane.showInputDialog(
+    "Enter Customer ID");
+
+String cancelmembershipId =
+    JOptionPane.showInputDialog(
+    "Enter Membership ID");
+
+boolean canceled =
+    gym.cancelSubscription(
+    cancelcustomerId,
+    Integer.parseInt(cancelmembershipId));
+
+if (canceled) {
+
+    JOptionPane.showMessageDialog(
+        this,
+        "Subscription Canceled");
+
+} else {
+
+    JOptionPane.showMessageDialog(
+        this,
+        "Subscription Not Found");
+}
+
+}
+
+
+
+    // EXIT
+    if (e.getSource() == exitButton) {
+JOptionPane.showMessageDialog(
+        this,
+        "Thank you for using Gym System");
+        System.exit(0);
+    }
+    
+    
+} 
+public static void main(String[] args) {
 
         new GymGUI();
     }
