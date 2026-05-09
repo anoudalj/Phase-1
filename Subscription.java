@@ -16,6 +16,28 @@ public class Subscription implements Serializable {
         this.id = id;
     }
 
+
+public Subscription(
+    String fullName,
+    String phone,
+    String id,
+    Membership membership,
+    int months)
+{
+    this.fullName = fullName;
+    this.phone = phone;
+    this.id = id;
+
+    this.membership = membership;
+    this.numOfMonths = months;
+
+    membership.setAvailable(false);
+
+    totalPrice =
+        numOfMonths *
+        membership.calculatePrice();
+}
+
     // copy constructor
     public Subscription(Subscription obj) {
         this.fullName = obj.fullName;
