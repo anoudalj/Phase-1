@@ -1,4 +1,7 @@
-public class List {
+
+import java.io.Serializable;
+
+public class List implements Serializable{
    private Node head;
    private Node tail;
    private String name;
