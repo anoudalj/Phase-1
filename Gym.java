@@ -1,4 +1,7 @@
-public class Gym {
+
+import java.io.*;
+
+public class Gym implements Serializable{
    private String gymName;
    List membershipList;
    List subscriptions;
@@ -124,4 +127,101 @@ public class Gym {
    public List getAllMemberships() {
       return membershipList;
    }
+   
+   
+   // SAVE ALL DATA
+
+   public void saveAllInfo() {
+
+      try {
+
+         // save memberships
+         File out = new File("Memberships.dat");
+
+         FileOutputStream fos = new FileOutputStream(out);
+
+         ObjectOutputStream oos =
+               new ObjectOutputStream(fos);
+
+         oos.writeObject(membershipList);
+
+         oos.close();
+
+         // save subscriptions
+         File out2 = new File("Subscriptions.dat");
+
+         FileOutputStream fos2 =
+               new FileOutputStream(out2);
+
+         ObjectOutputStream oos2 =
+               new ObjectOutputStream(fos2);
+
+         oos2.writeObject(subscriptions);
+
+         oos2.close();
+
+      }
+
+      catch (IOException e) {
+
+         System.out.println(e.toString());
+
+      }
+   }
+
+
+   // READ ALL DATA
+
+
+   public void readAllData() {
+
+      try {
+
+         // read memberships
+         File f = new File("Memberships.dat");
+
+         FileInputStream ff =
+               new FileInputStream(f);
+
+         ObjectInputStream in =
+               new ObjectInputStream(ff);
+
+         membershipList = (List) in.readObject();
+
+         in.close();
+
+         // read subscriptions
+         File f2 = new File("Subscriptions.dat");
+
+         FileInputStream ff2 =
+               new FileInputStream(f2);
+
+         ObjectInputStream in2 =
+               new ObjectInputStream(ff2);
+
+         subscriptions =
+               (List) in2.readObject();
+
+         in2.close();
+
+         System.out.println(
+               "All data in files are loaded.");
+
+      }
+
+      catch (ClassNotFoundException ex) {
+
+         System.out.println(ex.toString());
+
+      }
+
+      catch (IOException e) {
+
+         System.out.println(e.toString());
+
+      }
+      
+}
+
+}
 }
