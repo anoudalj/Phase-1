@@ -1,22 +1,42 @@
-import java.util.Scanner;
+
+import java.util.*;
+import java.io.*;
 
 public class TestGym {
 
    static Scanner input = new Scanner(System.in);
    static Gym gym = new Gym("Power Gym", 1000);
 
-   public static void main(String[] args) {
-   
+public static void main(String[] args) {
+
+      File f = new File("Memberships.dat");
+
+      File f2 = new File("Subscriptions.dat");
+
+      if (f.exists() && f2.exists()) {
+
+         gym.readAllData();}
+         
+      else{
       // create memberships
-      RegularMembership reg1 = new RegularMembership(3, 101, "Regular", 250);
-      RegularMembership reg2 = new RegularMembership(6, 102, "Regular", 300);
-   
-      PremiumMembership prem1 = new PremiumMembership(true, false, 201, "Premium", 500);
-      PremiumMembership prem2 = new PremiumMembership(true, true, 202, "Premium", 550);
-   
-      VIPMembership vip1 = new VIPMembership(2, true, true, 301, "VIP", 800);
-      VIPMembership vip2 = new VIPMembership(4, true, true, 302, "VIP", 950);
-   
+      RegularMembership reg1 =
+         new RegularMembership(3, 101, "Regular", 250);
+
+      RegularMembership reg2 =
+         new RegularMembership(6, 102, "Regular", 300);
+
+      PremiumMembership prem1 =
+         new PremiumMembership(true, false,201, "Premium", 500);
+
+      PremiumMembership prem2 =
+         new PremiumMembership(true, true, 202, "Premium", 550);
+
+      VIPMembership vip1 =
+         new VIPMembership(2, true, true, 301, "VIP", 800);
+
+      VIPMembership vip2 =
+         new VIPMembership(4, true, true, 302, "VIP", 950);
+
       // add to gym
       gym.addMembership(reg1);
       gym.addMembership(reg2);
@@ -24,9 +44,16 @@ public class TestGym {
       gym.addMembership(prem2);
       gym.addMembership(vip1);
       gym.addMembership(vip2);
-   
-      int choice;
-      do {
+    }
+
+      int choice = 0;
+
+   // menu starts here           
+        do {
+         
+         
+         try {
+        
          System.out.println("***** Menu *****");
          System.out.println("1- Add new subscription");
          System.out.println("2- View memberships");
@@ -35,6 +62,7 @@ public class TestGym {
          System.out.println("5- Add new membership");
          System.out.println("6- Delete membership");
          System.out.println("7- Exit");
+         
          choice = input.nextInt();
       
          switch (choice) {
@@ -54,12 +82,7 @@ public class TestGym {
                addNewMembership();
                break;
             case 6:
-               System.out.println("Enter membership ID");
-               int id = input.nextInt();
-               if (gym.deleteMembership(id))
-                  System.out.println("Deletion has been done\n");
-               else
-                  System.out.println("Can't delete\n");
+               deleteMembership();
                break;
             case 7:
                System.out.println("**** Goodbye! *****");
@@ -67,14 +90,35 @@ public class TestGym {
             default:
                System.out.println("Invalid input");
          }
-      } while (choice != 7);
+         
+         }catch(InputMismatchException e) {
+
+         System.out.println("Enter digits only");
+         input.next();}
+         
+         
+      } while(choice != 7);
    }
 
    // add subscription
    public static void addNewSubscription() {
       System.out.println("Enter membership ID: ");
-      int id = input.nextInt();
-      Membership membershipObj = gym.searchMembership(id);
+      
+      int id = 0;
+      
+      try {
+      
+         id = input.nextInt();
+            
+      }catch(InputMismatchException e) {
+
+         System.out.println("Enter digits only");
+
+         input.next();
+
+         return;}     
+            
+           Membership membershipObj = gym.searchMembership(id);
    
       if (membershipObj == null || membershipObj.isAvailable() == false) {
          System.out.println("This membership is not available, try again");
@@ -82,28 +126,62 @@ public class TestGym {
       }
    
       input.nextLine();
-      String name = readValidName(input);
-      String phone = readValidPhone(input);
+      
+      String name = "";
+      String phone = "";
+      
+      try {
+
+         name = readValidName();
+         phone = readValidPhone();
+
+      }catch (InvalidNameException e) {
+
+         System.out.println(e.getMessage());
+         return;}
+
+       catch (InvalidPhoneException e) {
+
+         System.out.println(e.getMessage());
+         return; }      
+      
       System.out.println("Enter customer ID: ");
       String idNum = input.next();
    
       Subscription sub = new Subscription(name, phone, idNum);
    
-      System.out.println("Enter number of months: ");
-      int months = input.nextInt();
-   
+      int months = 0;
+
+      try {
+
+         System.out.println("Enter number of months:");
+
+         months = input.nextInt();
+
+      if (months <= 0)throw new ArithmeticException("Months must be positive");
+         
+         }catch (ArithmeticException e) {
+         
+         System.out.println(e.getMessage());
+
+         return;}  
+             
       sub.subscribe(membershipObj, months);
+
       gym.addSubscription(sub);
-   
+
+      gym.saveAllInfo();
+
       System.out.println("Subscription has been added successfully");
-      System.out.println(sub);
+      System.out.println(sub);  
+
    }
 
    // add membership
    public static void addNewMembership() {
       System.out.println("Enter what type you want the membership to be : 1-regular , 2-premium 3- vip");
       int type = input.nextInt();
-
+      
       System.out.println("Enter an ID to create a new membership");
       int addid = input.nextInt();
 
@@ -111,11 +189,34 @@ public class TestGym {
       input.nextLine();
       String membership_name = input.nextLine();
 
-      System.out.println("Enter a price for the membership ");
-      double price = input.nextDouble();
-               
-      Membership new_membership;
-               
+      double price = 0;
+      
+      try {
+
+      System.out.println("Enter membership price:");
+
+      price = input.nextDouble();
+
+      if (price <= 0)
+
+      throw new ArithmeticException("Price must be positive");
+      
+      
+      }catch (ArithmeticException e) {
+
+      System.out.println(e.getMessage());
+      return;}               
+      
+      Membership new_membership = null;
+         
+      try {
+
+      if (type < 1 || type > 3) throw new IllegalArgumentException("Invalid membership type");
+
+      }catch (IllegalArgumentException e) {
+       System.out.println(e.getMessage());
+       return;}
+         
       if (type == 1) {
          System.out.println("how many days per week the person can come to the gym in this membership?");
          int daysperweek = input.nextInt();
@@ -139,22 +240,41 @@ public class TestGym {
 
          new_membership = new VIPMembership(guestpasses, personaltranier, dietplan, addid, membership_name, price);
       }
-      else {
-         System.out.println("the type number you entered doesnt exist");
-         return;
-      }
+        
+        if (new_membership != null) {
                
-      if (gym.addMembership(new_membership))
+         gym.addMembership(new_membership);
+
+         gym.saveAllInfo();
+
          System.out.println("addition has been done\n");
+      }
       else
-         System.out.println("Can't add\n");
-   }
+         System.out.println("Can't add\n");   }
 
    // view memberships
    public static void viewMemberships() {
       List list = gym.getAllMemberships();
       list.print();
    }
+   
+   
+   
+   // delete membership
+   public static void deleteMembership() {
+
+   System.out.println("Enter membership ID");
+   int id = input.nextInt();
+
+   if (gym.deleteMembership(id)) {
+
+      gym.saveAllInfo();
+
+      System.out.println("Deletion has been done\n");
+   }
+   else
+      System.out.println("Can't delete\n");
+}
 
    // cancel subscription
    public static void cancelSubscription() {
@@ -162,11 +282,15 @@ public class TestGym {
       String id = input.next();
       System.out.println("Enter membership ID: ");
       int no = input.nextInt();
-   
-      if (gym.cancelSubscription(id, no))
-         System.out.println("Cancellation has been done.");
+
+      if (gym.cancelSubscription(id, no)) {
+
+      gym.saveAllInfo();
+
+      System.out.println("Cancellation has been done.");
+      }
       else
-         System.out.println("Sorry, can't cancel.");
+      System.out.println("Sorry, can't cancel.");   
    }
 
    // search subscription
@@ -176,74 +300,61 @@ public class TestGym {
       System.out.println("Enter membership ID: ");
       int no = input.nextInt();
    
-      Subscription sub = gym.searchSubscription(id, no);
-   
-      if (sub == null)
-         System.out.println("Can't find this subscription");
-      else
+      try {
+
+         Subscription sub = gym.searchSubscription(id, no);
+
+         if (sub == null)
+
+         throw new NullPointerException("Subscription not found");
+         
          System.out.println(sub);
-   }
+         
+         }catch (NullPointerException e) {
+         System.out.println(e.getMessage());}   
+          
+         }
    
-   public static String readValidPhone(Scanner input) {
-      String phone;
-      boolean valid;
-    
-      while (true) {
-         System.out.print("Enter phone (10 digits): ");
-         phone = input.next(); 
-         valid = true;
+public static String readValidPhone()
+       throws InvalidPhoneException {
 
-         if (phone.length() != 10) {
-            valid = false;
-         } 
-         else {
-            for (int i = 0; i < phone.length(); i++) {
-               if (!Character.isDigit(phone.charAt(i))) {
-                  valid = false;
-                  break;
-               }
-            }
-         }
+   String phone;
 
-         if (valid)
-            return phone;
+   System.out.print("Enter phone number: ");
+   phone = input.next();
 
-         System.out.println("Invalid phone number.");
-      }
+   if (phone.length() != 10)
+      throw new InvalidPhoneException(
+            "Phone must be 10 digits");
+
+   for (int i = 0; i < phone.length(); i++) {
+
+      if (!Character.isDigit(phone.charAt(i)))
+         throw new InvalidPhoneException(
+               "Phone must contain digits only");
    }
 
-   public static String readValidName(Scanner input) {
-      String name;
-      boolean valid;
-      boolean hasSpace;
+   return phone;
+}
 
-      while (true) {
-         System.out.print("Enter customer's full name: ");
-         name = input.nextLine();
-         valid = true;
-         hasSpace = false;
+public static String readValidName()
+       throws InvalidNameException {
 
-         if (name.length() == 0) {
-            valid = false;
-         } 
-         else {
-            for (int i = 0; i < name.length(); i++) {
-               char ch = name.charAt(i);
+   String name;
 
-               if (ch == ' ')
-                  hasSpace = true;
+   System.out.print("Enter full name: ");
+   name = input.nextLine();
 
-               if (!Character.isLetter(ch) && ch != ' ') {
-                  valid = false;
-                  break;
-               }
-            }
-         }
+   for (int i = 0; i < name.length(); i++) {
 
-         if (valid && hasSpace)
-            return name;
+      char ch = name.charAt(i);
 
-         System.out.println("Invalid full name. Enter first and last name.");
-      }
+      if (!Character.isLetter(ch) && ch != ' ')
+         throw new InvalidNameException(
+               "Name must contain letters only");
    }
+
+   return name;
+}
+
 }
