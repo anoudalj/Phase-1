@@ -1,4 +1,7 @@
-public abstract class Membership {
+
+import java.io.Serializable;
+
+public abstract class Membership implements Serializable{
     private int membershipId;
     private boolean available;
     protected double price;
